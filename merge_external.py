@@ -86,6 +86,12 @@ def create_extra_info(tornado_path, cpi_path):
     # final merge.  All information is now present, redundant columns are dropped
     complete = pd.merge(cool_tornado, state_info, on='ANSI')
     complete.drop(['variable', 'State / territory', 'year', 'month', 'ANSI'], axis=1, inplace=True)
+
+    # add in USA regions
+    # not going to update above code, just going to add more here below
+    region_path = 'https://raw.githubusercontent.com/cphalpert/census-regions/refs/heads/master/us%20census%20bureau%20regions%20and%20divisions.csv'
+    region_df = pd.read_csv(region_path)
+    complete = pd.merge(complete, region_df, left_on='st', right_on='State Code', how='left')
     
     return complete
 
