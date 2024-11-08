@@ -115,6 +115,9 @@ def group_tornado(df):
         'pop': 'max',
         'Total area': 'max',
         'Land area': 'max',
-        'Water area': 'max'
+        'Water area': 'max',
+        'State': 'max', # comment out if State name unabvr. isn't important
+        'Region': 'max',
+        'Division': 'max'
     })
     return tornados.reset_index()
