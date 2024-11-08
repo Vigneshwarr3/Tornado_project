@@ -24,15 +24,16 @@ OUTPUT: the following cells are changed
 Note: closs is not touched here.  If we include that data, it needs to be cleaned
 '''
 def clean_col(df):
-    def loss_magnitude(df):
-        # creates new column 'damage' that converts 'loss' to comparable amounts
+    def loss_magnitude(df, col):
+        # creates new column 'damage' that converts col to comparable amounts
+        # the 'col' will be either 'loss' or 'closs'
         # see documentation for more info.  Converts old data to estimated dollar amounts
 
-        df_d = df[['yr','loss']]
+        df_d = df[['yr',col]]
 
         row_d = []
         for x in range(df_d.shape[0]):
-            loss = df_d['loss'][x]
+            loss = df_d[col][x]
             #fixes problem from 1996-2015
             if(loss == 0):
                 row_d.append(None)
@@ -66,7 +67,8 @@ def clean_col(df):
         return df
     
     # makes dollar estimate for old data
-    df = loss_magnitude(df)
+    df = loss_magnitude(df, 'loss')
+    df = loss_magnitude(df, 'closs')
     # changes bad time info
     df = change_time(df)
     # updates latitude and longitude for plotting
