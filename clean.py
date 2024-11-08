@@ -24,7 +24,7 @@ OUTPUT: the following cells are changed
 Note: closs is not touched here.  If we include that data, it needs to be cleaned
 '''
 def clean_col(df):
-    def loss_magnitude(df, col):
+    def loss_magnitude(df, col, new_col):
         # creates new column 'damage' that converts col to comparable amounts
         # the 'col' will be either 'loss' or 'closs'
         # see documentation for more info.  Converts old data to estimated dollar amounts
@@ -50,11 +50,11 @@ def clean_col(df):
                 row_d.append(loss)
                 continue
 
-        df['damage'] = row_d
+        df[new_col] = row_d
         return df
     
     def change_time(df):
-        df['tz'].replace(0, np.nan, inplace=True)
+        df['tz'].replace(0, np.nan)
         # since its one value I'm just doing this
         # I couldn't figure out how to subtract 5 hours without formatting issues
         df.loc[df['tz'] == 9, 'time'] = '02:08:00'
@@ -67,15 +67,15 @@ def clean_col(df):
         return df
     
     # makes dollar estimate for old data
-    df = loss_magnitude(df, 'loss')
-    df = loss_magnitude(df, 'closs')
+    df = loss_magnitude(df, 'loss', 'damage')
+    df = loss_magnitude(df, 'closs', 'crop_damage')
     # changes bad time info
     df = change_time(df)
     # updates latitude and longitude for plotting
     df = latlon(df)
     # updates missing values as NA so agg functions work
-    df['mag'].replace(-9, np.nan, inplace=True)
-    df['closs'].replace(0, np.nan, inplace=True)
+    df['mag'].replace(-9, np.nan)
+    #df['closs'].replace(0, np.nan, inplace=True)
     
     return df
     
