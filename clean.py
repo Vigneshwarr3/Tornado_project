@@ -92,18 +92,18 @@ def group_tornado(df):
     # this creates a unique value for each tornado that can be grouped by
     df['ut'] = df['om'].astype(str) + df['yr'].astype(str)
     
-    tornados = df.groupby(by=['ut']).agg({
+    tornados = df.groupby(by=['ut', 'st']).agg({
         'yr': 'min',
         'mo': 'min',
         'dy': 'min',
         'date': 'min',
         'time': 'min',
-        'st': 'max', #idk about this one but it returns something
+        #'st': 'max',
         'mag': 'max',
         'inj': 'sum',
         'fat': 'sum',
         'damage': 'sum',
-        #'closs': 'sum',
+        'crop_damage': 'sum',
         'slat': 'max',
         'slon': 'max',
         'elat': 'max',
@@ -117,4 +117,4 @@ def group_tornado(df):
         'Land area': 'max',
         'Water area': 'max'
     })
-    return tornados
+    return tornados.reset_index()
