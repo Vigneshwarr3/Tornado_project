@@ -22,6 +22,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import folium
+from streamlit_folium import st_folium
 
 ''' INFLATION ADJUSTED LOSSES '''
 
@@ -35,7 +37,9 @@ def infl_adj_loss_state(df, states, years):
     sns.barplot(data = group_df.iloc[0:10], x = 'st', y = 'loss_adjusted')
     plt.title(f"Inflation adjusted loss for states in the years {years[0]} - {years[1]}")
     plt.xlabel("state")
-    plt.ylabel("dollar loss, inflation adjusted for 8/24")               
+    plt.ylabel("dollar loss, inflation adjusted for 8/24")      
+
+    return plt         
     
 # df is cleaned tornado, states is array ['x','y','z'], years is [start,end]
 def infl_adj_loss_state_year(df3, states, years):    
@@ -172,3 +176,83 @@ def time_of_year(df, states, years):
     plt.title(f"Frequency of tornados for states in the years {years[0]} - {years[1]}")
     plt.xlabel("month of year")
     plt.ylabel("total tornados per month") 
+
+# Instead of having the folium maps in the app.py file, I'm (vigneshwar) moving the here into a function, so that its neat.
+
+def get_tooltip_content(state_name, df_year):
+    row = df_year[df_year['State'] == state_name]
+    if state_name in df_year['State'].values:
+        content = f"""
+        <b>State:</b> {state_name}<br>
+        <b>Tornadoes:</b> {row['om'].values[0]}<br>
+        <b>Fatalities:</b> {row['fat'].values[0]}<br>
+        <b>Crop Loss:</b> ${row['closs'].values[0]:,.0f}<br>
+        <b>Property Loss:</b> ${row['loss'].values[0]:,.0f}<br>
+        <b>Injuries:</b> {row['inj'].values[0]}
+        """
+    else:
+        content = f"<b>State:</b> {state_name}<br>No data available"
+    
+    return content
+
+### Folium map ###
+def folium_map(df_year, year):
+    geojson_url = 'https://raw.githubusercontent.com/python-visualization/folium/master/examples/data/us-states.json'
+
+    m = folium.Map(location=[42, -98], zoom_start=4)
+
+    folium.Choropleth(
+        geo_data=geojson_url,
+        name='choropleth',
+        data=df_year,
+        columns=['State', 'om'], 
+        key_on='feature.properties.name',
+        fill_color='Oranges',
+        line_opacity=0.5,
+        legend_name=f'Number of Tornadoes in the year {year}'
+    ).add_to(m)
+
+    tooltip_layer = folium.GeoJson(
+        geojson_url,
+        style_function=lambda x: {'fillColor': 'transparent', 'color': 'black', 'weight': 1, 'fillOpacity': 0},
+        tooltip=folium.GeoJsonTooltip(
+            fields=['name'],  # Field from GeoJSON to use for tooltips
+            aliases=['State:'],  # Label for the field
+            localize=True,
+            sticky=False,
+            labels=True
+        ),
+        highlight_function=lambda x: {'weight': 2, 'color': 'blue', 'fillOpacity': 0.7}
+    )
+
+    for feature in tooltip_layer.data['features']:
+        state_name = feature['properties']['name']
+        tooltip_content = get_tooltip_content(state_name, df_year)
+        feature['properties']['tooltip'] = tooltip_content  # Add tooltip content for each state
+
+    tooltip_layer.add_child(folium.features.GeoJsonTooltip(fields=['tooltip'], labels=False))
+
+    tooltip_layer.add_to(m)
+
+    return m
+
+####### Tornado paths #########
+def tornado_paths(df, year):
+
+    tornado_location = df[['om', 'yr', 'slat','slon', 'elat', 'elon', 'len', 'wid']]
+    tornado_location = tornado_location[~ tornado_location.duplicated()]
+
+    tornado_paths = tornado_location[tornado_location['yr'] == year]
+
+    tornado_map = folium.Map(location=[42, -98], zoom_start=4)
+
+    for _, row in tornado_paths.iterrows():
+        weight_ = ((row['wid'] - min(tornado_paths['wid'])) / (max(tornado_paths['wid']) - min(tornado_paths['wid'])))*10
+        start = [row['slat'], row['slon']]
+        end = [row['elat'], row['elon']]
+        weight = row['wid']
+        hover_message = f"<b> Tornado Dimensions</b>  <br> Length: {row['len']} miles <br>Width: {row['wid']} yards"
+        
+        folium.PolyLine(locations=[start, end], color="red", weight=weight_, tooltip=hover_message).add_to(tornado_map)
+    
+    return tornado_map
