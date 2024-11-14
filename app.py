@@ -59,7 +59,7 @@ df, fatal_loss = get_data()
 year = st.selectbox("Select a year:",
                      df['Year'].unique(), default=min(df['yr']))
 year_end = st.selectbox("Select a year:",
-                     df[df['yr'] > year].unique(), default=max(df['yr'])
+                     df[df['yr'] > year].unique(), default=max(df['yr']))
 
 # we can make more like regions, but we might want to reformat this
 states = st.multiselect("Select States: ", df['st'].unique())
