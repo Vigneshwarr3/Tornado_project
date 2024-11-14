@@ -24,15 +24,16 @@ OUTPUT: the following cells are changed
 Note: closs is not touched here.  If we include that data, it needs to be cleaned
 '''
 def clean_col(df):
-    def loss_magnitude(df):
-        # creates new column 'damage' that converts 'loss' to comparable amounts
+    def loss_magnitude(df, col, new_col):
+        # creates new column 'damage' that converts col to comparable amounts
+        # the 'col' will be either 'loss' or 'closs'
         # see documentation for more info.  Converts old data to estimated dollar amounts
 
-        df_d = df[['yr','loss']]
+        df_d = df[['yr',col]]
 
         row_d = []
         for x in range(df_d.shape[0]):
-            loss = df_d['loss'][x]
+            loss = df_d[col][x]
             #fixes problem from 1996-2015
             if(loss == 0):
                 row_d.append(None)
@@ -49,11 +50,11 @@ def clean_col(df):
                 row_d.append(loss)
                 continue
 
-        df['damage'] = row_d
+        df[new_col] = row_d
         return df
     
     def change_time(df):
-        df['tz'].replace(0, np.nan, inplace=True)
+        df['tz'].replace(0, np.nan)
         # since its one value I'm just doing this
         # I couldn't figure out how to subtract 5 hours without formatting issues
         df.loc[df['tz'] == 9, 'time'] = '02:08:00'
@@ -66,14 +67,15 @@ def clean_col(df):
         return df
     
     # makes dollar estimate for old data
-    df = loss_magnitude(df)
+    df = loss_magnitude(df, 'loss', 'damage')
+    df = loss_magnitude(df, 'closs', 'crop_damage')
     # changes bad time info
     df = change_time(df)
     # updates latitude and longitude for plotting
     df = latlon(df)
     # updates missing values as NA so agg functions work
-    df['mag'].replace(-9, np.nan, inplace=True)
-    df['closs'].replace(0, np.nan, inplace=True)
+    df['mag'].replace(-9, np.nan)
+    #df['closs'].replace(0, np.nan, inplace=True)
     
     return df
     
@@ -90,18 +92,18 @@ def group_tornado(df):
     # this creates a unique value for each tornado that can be grouped by
     df['ut'] = df['om'].astype(str) + df['yr'].astype(str)
     
-    tornados = df.groupby(by=['ut']).agg({
+    tornados = df.groupby(by=['ut', 'st']).agg({
         'yr': 'min',
         'mo': 'min',
         'dy': 'min',
         'date': 'min',
         'time': 'min',
-        'st': 'max', #idk about this one but it returns something
+        #'st': 'max',
         'mag': 'max',
         'inj': 'sum',
         'fat': 'sum',
         'damage': 'sum',
-        #'closs': 'sum',
+        'crop_damage': 'sum',
         'slat': 'max',
         'slon': 'max',
         'elat': 'max',
@@ -113,6 +115,9 @@ def group_tornado(df):
         'pop': 'max',
         'Total area': 'max',
         'Land area': 'max',
-        'Water area': 'max'
+        'Water area': 'max',
+        'State': 'max', # comment out if State name unabvr. isn't important
+        'Region': 'max',
+        'Division': 'max'
     })
-    return tornados
+    return tornados.reset_index()
