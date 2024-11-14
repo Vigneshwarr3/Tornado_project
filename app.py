@@ -54,8 +54,15 @@ df, fatal_loss = get_data()
 # ------------------------------
 # PART 1 : Filter Data
 # ------------------------------
+
+# need to update this from 'Year' to 'yr' once we update our initial df
 year = st.selectbox("Select a year:",
-                     df['Year'].unique())
+                     df['Year'].unique(), default=min(df['yr']))
+year_end = st.selectbox("Select a year:",
+                     df[df['yr'] > year].unique(), default=max(df['yr'])
+
+# we can make more like regions, but we might want to reformat this
+states = st.multiselect("Select States: ", df['st'].unique())
 
 df_year = df_year = fatal_loss[fatal_loss['Year'] == year]
 
