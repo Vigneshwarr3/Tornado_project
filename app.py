@@ -5,6 +5,7 @@ from utils.b2 import B2
 import folium
 from streamlit_folium import st_folium
 import visualizations as vis
+from botocore.exceptions import ClientError
 
 # ------------------------------------------------------
 #                      APP CONSTANTS
@@ -46,7 +47,14 @@ def get_data():
 # ------------------------------
 st.write('''# Project Tornado''')
 
-df, fatal_loss = get_data()
+try:
+    df, fatal_loss = get_data()
+except ClientError as e:
+    st.error("We're sorry, but our bandwidth cap has been reached for the day.  Please come again tomorrow!\
+        If this problem persists, please contact one of us via our GitHub: https://github.com/Vigneshwarr3/Tornado_project")
+    st.stop()
+    # If we want to create an alternative, like be sent to another page of our website, we can do that fs
+    # but we don't have those capabilities rn, so I'm adding the stop function
 
 # ------------------------------
 # PART 1 : Filter Data
