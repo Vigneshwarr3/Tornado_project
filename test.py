@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 #import visualizations as vis
 from visualizations import stateVis
+from visualization_nation import nationVis
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -90,8 +91,17 @@ elif(selection == "Region"):
 
 else:
     # this is the nation option, no inputs needed, USA is the only nation in question
-    st.write("This area of code is being worked on!  No visualizations available at this time.") 
-    # need to make a py file with nation class and visualizations  
+    input = nationVis(df, year_new[0], year_new[1])
+
+    st.header("Damage Adjusted for Inflation")
+    st.pyplot(input.infl_adj_loss())
+
+    st.header("Fatalities")
+    st.pyplot(input.fat())
+    st.pyplot(input.fat_10kppl())
+
+
+
 
 
 
