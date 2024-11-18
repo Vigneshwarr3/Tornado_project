@@ -131,26 +131,146 @@ def analyze_tornado_dataset(df):
 
 
 def plot_top_tornado_states(df, top_n=10):
-    
-  
+    # Load the dataset with state areas in square miles
+    state_areas = {
+        'State': [
+            'NC', 'KY', 'MS', 'PA', 'IL', 'AR', 'MO', 'TX', 'OH', 'LA', 'TN', 'FL',
+            'AL', 'SC', 'KS', 'WY', 'NE', 'GA', 'IA', 'SD', 'ND', 'MN', 'WI', 'NM',
+            'CT', 'IN', 'CO', 'MD', 'WV', 'VA', 'MA', 'OR', 'CA', 'NJ', 'MI', 'NH',
+            'AZ', 'NY', 'MT', 'VT', 'UT', 'ME', 'ID', 'WA', 'DE', 'HI', 'AK', 'PR',
+            'NV', 'RI', 'DC', 'VI'
+        ],
+        'Area (square miles)': [
+            53819, 40409, 48432, 46055, 57914, 53179, 69707, 268596, 44825, 51843,
+            42144, 65758, 52420, 32020, 82278, 97100, 77348, 59425, 56273, 77000,
+            70700, 86936, 65498, 121590, 5543, 35817, 104094, 12407, 24230, 42774,
+            10554, 98379, 163696, 8722, 96714, 9349, 113990, 54555, 147040, 9616,
+            84899, 35385, 83569, 71298, 1949, 10931, 663300, 3515, 110572, 1214, 68, 133
+        ]
+    }
+
+    # Create a DataFrame from the area data
+    df_areas = pd.DataFrame(state_areas)
+
+    # Group tornado data by state and count the number of tornadoes in each state
+    tornado_counts = df['st'].value_counts().reset_index()
+    tornado_counts.columns = ['State', 'Tornado Count']
+
+    # Merge the tornado counts with the state areas
+    df_merged = pd.merge(tornado_counts, df_areas, on='State', how='left')
+
+    # Calculate the average number of tornadoes per square mile for each state
+    df_merged['Tornadoes per Square Mile'] = df_merged['Tornado Count'] / df_merged['Area (square miles)']
+
+    # Sort by Tornadoes per Square Mile to find the state with the highest density
+    df_sorted = df_merged.sort_values(by='Tornadoes per Square Mile', ascending=False)
+
     # Suppress specific warnings
     warnings.filterwarnings("ignore", category=FutureWarning)
-
-    # Select top N states
-    df_sorted = df.sort_values(by='Total area', ascending=False)
     top_states = df_sorted.head(top_n)
 
     # Plot
     plt.figure(figsize=(10, 6))
-    sns.barplot(x='Total area', y='State', data=top_states, palette='coolwarm')
+    sns.barplot(x='Tornadoes per Square Mile', y='State', data=top_states, palette='coolwarm')
 
     # Add labels and title
-    plt.title(f'Top {top_n} States with Highest Tornadoes per Square Mile')
-    plt.xlabel('Tornadoes per square')
+    plt.title(f'Top {top_n} States with Highest Tornados per Square Mile')
+    plt.xlabel('Tornados per Square Mile')
     plt.ylabel('State')
 
     # Show the plot
     return st.pyplot(plt)
+# Function to plot tornado occurrences by year range for a state
+def plot_tornadoes_by_state_and_year(df, state, years):
+    """
+    Plot the tornado occurrences in a state over a specified range of years.
+    """
+    years = sorted(years)
+    start_year, end_year = years[0], years[-1]
+
+    # Filter the dataset for the specified state and range of years
+    state_data = df[(df['st'] == state) & (df['yr'] >= start_year) & (df['yr'] <= end_year)]
+
+    if state_data.empty:
+        st.warning(f"No data available for {state} in the range {start_year}-{end_year}.")
+        return
+
+    # Group by year
+    yearly_data = state_data.groupby('yr').size().reset_index(name='Tornado Count')
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(yearly_data['yr'], yearly_data['Tornado Count'], marker='o', color='b', linestyle='-')
+    ax.fill_between(yearly_data['yr'], yearly_data['Tornado Count'], color="skyblue", alpha=0.4)
+    ax.set_title(f"Tornado Occurrences in {state} from {start_year} to {end_year}")
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Tornado Count")
+    ax.grid(True)
+    plt.xticks(yearly_data['yr'], rotation=45)
+    st.pyplot(fig)
+
+# Function to plot tornado occurrences by month for a single year
+def plot_tornadoes_by_month_for_year(df, year, state):
+    """
+    Plot the tornado occurrences in a state for each month of a specific year.
+    """
+    year_data = df[(df['yr'] == year) & (df['st'] == state)]
+
+    if year_data.empty:
+        st.warning(f"No data available for {state} in the year {year}.")
+        return
+
+    # Group by month
+    tornado_counts_by_month = year_data.groupby('mo').size()
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    tornado_counts_by_month.plot(kind='bar', color='skyblue', edgecolor='black', ax=ax)
+    ax.set_title(f"Tornado Occurrences in {state} for Each Month of {year}")
+    ax.set_xlabel("Month")
+    ax.set_ylabel("Tornado Count")
+    ax.set_xticks(range(12))
+    ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], rotation=45)
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    st.pyplot(fig)
+# Function to plot the yearly trend of tornado occurrences
+def plot_yearly_trend(df):
+    """
+    Plot the total number of tornadoes by year.
+    """
+    # Group data by year and count tornado occurrences
+    yearly_trend = df.groupby('yr').size().reset_index(name='Tornado Count')
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(yearly_trend['yr'], yearly_trend['Tornado Count'], marker='o', color='b', linestyle='-')
+    ax.fill_between(yearly_trend['yr'], yearly_trend['Tornado Count'], color="skyblue", alpha=0.4)
+    ax.set_title("Total Tornadoes by Year")
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Number of Tornadoes")
+    ax.grid(True)
+    plt.tight_layout()
+    st.pyplot(fig)
+
+# Function to plot the monthly trend of tornado occurrences
+def plot_monthly_trend(df):
+    """
+    Plot the total number of tornadoes by month.
+    """
+    # Group data by month and count tornado occurrences
+    monthly_trend = df.groupby('mo').size().reset_index(name='Tornado Count')
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.bar(monthly_trend['mo'], monthly_trend['Tornado Count'], color='skyblue', edgecolor='black')
+    ax.set_title("Total Tornadoes by Month")
+    ax.set_xlabel("Month")
+    ax.set_ylabel("Number of Tornadoes")
+    ax.set_xticks(range(1, 13))
+    ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    st.pyplot(fig)
 
 # # Call the function by passing the path to your CSV file
 # analyze_tornado_dataset('/content/drive/MyDrive/1950-2023_all_tornadoes.csv')

@@ -1,12 +1,13 @@
 import os
 
 import streamlit as st
+import pandas as pd
 from dotenv import load_dotenv
 from utils.b2 import B2
 import folium
 from streamlit_folium import st_folium
 import visualizations as vis
-from tornado4 import analyze_tornado_dataset,plot_top_tornado_states
+from tornado4 import analyze_tornado_dataset,plot_top_tornado_states,plot_tornadoes_by_month_for_year,plot_tornadoes_by_state_and_year,plot_yearly_trend,plot_monthly_trend
 from botocore.exceptions import ClientError
 
 # ------------------------------------------------------
@@ -62,16 +63,73 @@ except ClientError as e:
 # PART 1 : Filter Data
 # ------------------------------
 
+
+
+s_df = pd.read_csv("https://raw.githubusercontent.com/Vigneshwarr3/Tornado_project/refs/heads/saipranam/data/1950-2023_all_tornadoes.csv")
+
+
+
+#------ Sai Pranam---------
+#analyze_tornado_dataset(s_df)
+st.subheader("Top 10 States with Highest Tornados per Square Mile")
+plot_top_tornado_states(s_df)
+# User inputs
+state = st.text_input("Enter the state abbreviation (e.g., TX, FL):", "").upper()
+years_input = st.text_input("Enter one or two years (comma-separated, e.g., '2000' or '2000, 2020'):")
+
+if state and years_input:
+    years = list(map(int, years_input.split(',')))
+
+    # Determine which function to call
+    if len(years) == 1:
+        st.subheader(f"Tornado Analysis for {state} in {years[0]}")
+        plot_tornadoes_by_month_for_year(s_df, years[0], state)
+    else:
+        st.subheader(f"Tornado Analysis for {state} from {years[0]} to {years[-1]}")
+        plot_tornadoes_by_state_and_year(s_df, state, years)
+# Sidebar for trend analysis
+st.sidebar.title("Analysis Options")
+trend_option = st.sidebar.radio("Select Analysis Type:", 
+                                    ['Yearly Trend', 'Monthly Trend'])
+
+# Yearly trend
+if trend_option == 'Yearly Trend':
+    st.subheader("Yearly Trend of Tornado Occurrences")
+    plot_yearly_trend(s_df)
+
+# Monthly trend
+elif trend_option == 'Monthly Trend':
+    st.subheader("Monthly Trend of Tornado Occurrences")
+    plot_monthly_trend(s_df)
+
+# State and year-specific analysis
+elif trend_option == 'State/Year Analysis':
+    state = st.text_input("Enter the state abbreviation (e.g., TX, FL):", "").upper()
+    years_input = st.text_input("Enter one or two years (comma-separated, e.g., '2000' or '2000, 2020'):")
+
+    if state and years_input:
+        years = list(map(int, years_input.split(',')))
+
+        # Determine which function to call
+        if len(years) == 1:
+            st.subheader(f"Tornado Analysis for {state} in {years[0]}")
+            plot_tornadoes_by_month_for_year(s_df, years[0], state)
+        else:
+            st.subheader(f"Tornado Analysis for {state} from {years[0]} to {years[-1]}")
+            plot_tornadoes_by_state_and_year(s_df, state, years) 
+
+#-----------------
+
+
+
 # need to update this from 'Year' to 'yr' once we update our initial df
 year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2020, 2023))
 year = year_new[0]
 year_end = year_new[0]
-#st.write(df.columns)
-
-analyze_tornado_dataset(df)
-plot_top_tornado_states(df)
+#st.write(df.columns)                  
 # we can make more like regions, but we might want to reformat this
 states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
+
 
 df_year = df_year = fatal_loss[fatal_loss['yr'] == year]
 
