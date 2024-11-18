@@ -76,10 +76,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Define the function to process the dataset
-def analyze_tornado_dataset(file_path):
-    # Step 1: Load the dataset
-    df = pd.read_csv(file_path)
-
+def analyze_tornado_dataset(df):
     # Step 2: View the first 5 rows
     print("First 5 rows of the dataset:")
     print(df.head())
@@ -129,7 +126,7 @@ def analyze_tornado_dataset(file_path):
     plt.figure(figsize=(20, 10))
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
     plt.title('Correlation Matrix of Numerical Columns')
-    plt.show()
+    return st.pyplot(plt)
 
 # Call the function by passing the path to your CSV file
 analyze_tornado_dataset('/content/drive/MyDrive/1950-2023_all_tornadoes.csv')

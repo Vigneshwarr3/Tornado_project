@@ -5,6 +5,7 @@ from utils.b2 import B2
 import folium
 from streamlit_folium import st_folium
 import visualizations as vis
+from tornado4 import analyze_tornado_dataset
 from botocore.exceptions import ClientError
 
 # ------------------------------------------------------
@@ -64,6 +65,8 @@ except ClientError as e:
 year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2020, 2023))
 year = year_new[0]
 year_end = year_new[0]
+
+analyze_tornado_dataset(df)
 
 # we can make more like regions, but we might want to reformat this
 states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
