@@ -5,7 +5,7 @@ from utils.b2 import B2
 import folium
 from streamlit_folium import st_folium
 import visualizations as vis
-from tornado4 import analyze_tornado_dataset
+from tornado4 import analyze_tornado_dataset,plot_top_tornado_states
 from botocore.exceptions import ClientError
 
 # ------------------------------------------------------
@@ -20,9 +20,9 @@ REMOTE_DATA = 'Tornado_clean.csv' # name of the file
 load_dotenv()
 
 # load Backblaze connection
-b2 = B2(endpoint=os.environ['B2_ENDPOINT'],
-        key_id=os.environ['B2_KEYID'],
-        secret_key=os.environ['B2_APPKEY'])
+b2 = B2(endpoint='https://s3.us-east-005.backblazeb2.com',
+        key_id='005ad5797e6974d0000000002',
+        secret_key='K005q7mZ1SwcxHEotsKEd7mnihbmkVg')
 
 # ------------------------------------------------------
 #                        CACHING
@@ -30,7 +30,7 @@ b2 = B2(endpoint=os.environ['B2_ENDPOINT'],
 @st.cache_data
 def get_data():
     # collect data frame of reviews and their sentiment
-    b2.set_bucket(os.environ['B2_BUCKETNAME'])
+    b2.set_bucket('tornado-second-version')
     df= b2.get_df(REMOTE_DATA)
 
     fatal_loss = df\
@@ -65,9 +65,10 @@ except ClientError as e:
 year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2020, 2023))
 year = year_new[0]
 year_end = year_new[0]
+#st.write(df.columns)
 
 analyze_tornado_dataset(df)
-
+plot_top_tornado_states(df)
 # we can make more like regions, but we might want to reformat this
 states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
 
