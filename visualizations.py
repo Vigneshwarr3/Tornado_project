@@ -40,18 +40,17 @@ class stateVis:
 
     ''' INFLATION ADJUSTED LOSSES '''
 
-    # df is cleaned tornado, states is array ['x','y','z'], years is [start,end]
-    def infl_adj_loss_state(self):
-        self.df['loss_adjusted'] = self.df['damage'] * self.df['CPI_Multiplier']
-        new_df = self.df[self.df['State'].isin(self.states)]
-        new_df = new_df[new_df['yr'].isin(list(range(int(self.years[0]),int(self.years[1]) ))) ]
-        group_df = new_df.groupby('State')['loss_adjusted'].sum().reset_index()
-        
-        fig, ax = plt.subplots()
-        sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'loss_adjusted', ax=ax)
-        ax.set_title(f"Total inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}")
-        ax.set_xlabel("state")
-        ax.set_ylabel("dollar loss, inflation adjusted for 8/24")      
+# df is cleaned tornado, states is array ['x','y','z'], years is [start,end]
+def infl_adj_loss_state(df, states, years):
+    df['loss_adjusted'] = df['damage'] * df['CPI_Multiplier']
+    new_df = df[df['st'].isin(states)]
+    new_df = new_df[df['yr'].isin(list(range(int(years[0]),int(years[1]) ))) ]
+    group_df = new_df.groupby('st')['loss_adjusted'].sum().reset_index()
+    
+    sns.barplot(data = group_df.iloc[0:10], x = 'st', y = 'loss_adjusted')
+    plt.title(f"Inflation adjusted loss for states in the years {years[0]} - {years[1]}")
+    plt.xlabel("state")
+    plt.ylabel("dollar loss, inflation adjusted for 8/24")      
 
         return fig        
         
