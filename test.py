@@ -1,10 +1,13 @@
 import os
 import streamlit as st
 import pandas as pd
-#import visualizations as vis
 from visualizations import stateVis
+from Nation_Visualisation import nationVis
+from Region_Visualisations import regionVis
+from Division_Visualisation import DivisionVis
 import seaborn as sns
 import matplotlib.pyplot as plt
+from streamlit_folium import st_folium
 
 df = pd.read_csv('Tornado_clean.csv')
 
@@ -15,20 +18,6 @@ class test:
         self.df = df
         self.states = states
         self.years = [start_year, end_year]
-    
-    def infl_adj_loss_state(self):
-        self.df['loss_adjusted'] = self.df['damage'] * self.df['CPI_Multiplier']
-        new_df = self.df[self.df['State'].isin(self.states)]
-        new_df = new_df[new_df['yr'].isin(list(range(int(self.years[0]),int(self.years[1]) ))) ]
-        group_df = new_df.groupby('State')['loss_adjusted'].sum().reset_index()
-        
-        sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'loss_adjusted')
-        plt.title(f"Inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}")
-        plt.xlabel("state")
-        plt.ylabel("dollar loss, inflation adjusted for 8/24") 
-
-        return plt
-
 
 # side bar
 with st.sidebar:
@@ -37,10 +26,11 @@ with st.sidebar:
         ("Nation", "Region", "Division", "State")
     )
 
-year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
+st.write("# Tornado Project")
 
 # creates drop down options for users to select their desired inputs
 if(selection == "State"):
+    year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
     states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
     
     # executes code if at least one state is selected
@@ -73,25 +63,46 @@ if(selection == "State"):
         st.write("Select states to see visualizations!")
 
 elif(selection == "Division"):
+    year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
     division = st.multiselect("Select Divisions: ", df.sort_values(by=['Division'], ascending=True)['Division'].unique())
     if(len(division) > 0):
-        st.write("This area of code is being worked on!  No visualizations available at this time.")
+        # st.write("This area of code is being worked on!  No visualizations available at this time.")
         # need to make a py file with divsion class and visualizations 
+        div_input = DivisionVis(df, division, year_new[0], year_new[1])
+
+        st.pyplot(div_input.infl_adj_loss_division())
+        st.pyplot(div_input.fat_division())
+
     else:
         st.write("Select divisions to see visualizations!")
 
 elif(selection == "Region"):
-    region = st.multiselect("Select Regions: ", df.sort_values(by=['Region'], ascending=True)['Region'].unique())  
-    if(len(region) > 0):
-        st.write("This area of code is being worked on!  No visualizations available at this time.") 
-        # need to make a py file with region class and visualizations 
-    else:
-        st.write("Select regions to see visualizations!")
+    year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023)) 
+
+    region_input = regionVis(df, year_new[0], year_new[1])
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("Damage")
+        st.pyplot(region_input.infl_adj_loss_region())
+    with col2:
+        st.header("Fatalities")
+        st.pyplot(region_input.fat_region())
 
 else:
-    # this is the nation option, no inputs needed, USA is the only nation in question
-    st.write("This area of code is being worked on!  No visualizations available at this time.") 
-    # need to make a py file with nation class and visualizations  
+    year = st.selectbox("Select a year", df['yr'].unique(), index = 73)
+    nation_input = nationVis(df, year)
+    
+    # displaying the metrics
+    nation_input.show_metrics()
+
+    # displaying the map 
+    st.write("\n")
+    st.write('''### Hover over each state to see the metrics!''')
+    st_folium(nation_input.folium_map(), width=700, height=450)
+
+    # displaying the map 
+    st_folium(nation_input.tornado_paths(), width=700, height=450)
 
 
 

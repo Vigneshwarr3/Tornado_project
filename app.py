@@ -122,7 +122,7 @@ year_end = year_new[0]
 # we can make more like regions, but we might want to reformat this
 states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
 
-df_year = df_year = fatal_loss[fatal_loss['yr'] == year]
+df_year = fatal_loss[fatal_loss['yr'] == year]
 
 col1, col2, col3 = st.columns(3)
 with col1:
