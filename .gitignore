@@ -3,6 +3,7 @@
 
 # IPython
 profile_default/
+tornado-project
 ipython_config.py
 
 # Python
