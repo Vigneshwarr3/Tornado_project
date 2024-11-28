@@ -2,9 +2,13 @@ import os
 import streamlit as st
 import pandas as pd
 from visualizations import stateVis
+
 from Nation_Visualisation import nationVis
 from Region_Visualisations import regionVis
 from Division_Visualisation import DivisionVis
+
+#from visualization_nation import nationVis
+
 import seaborn as sns
 import matplotlib.pyplot as plt
 from streamlit_folium import st_folium
@@ -89,7 +93,6 @@ elif(selection == "Region"):
         st.header("Fatalities")
         st.pyplot(region_input.fat_region())
 
-else:
     year = st.selectbox("Select a year", df['yr'].unique(), index = 73)
     nation_input = nationVis(df, year)
     
@@ -103,6 +106,19 @@ else:
 
     # displaying the map 
     st_folium(nation_input.tornado_paths(), width=700, height=450)
+    
+    # do we want to add multiple years?
+'''
+    # this is the nation option, no inputs needed, USA is the only nation in question
+    input = nationVis(df, year_new[0], year_new[1])
+
+    st.header("Damage Adjusted for Inflation")
+    st.pyplot(input.infl_adj_loss())
+
+    st.header("Fatalities")
+    st.pyplot(input.fat())
+    st.pyplot(input.fat_10kppl())
+'''
 
 
 
