@@ -16,7 +16,8 @@ st.write("We hope you enjoy this project!  If there are any problems, comments, 
 
 # for the tornados
 st.header("About our data")
-st.write("Our data comes from *put the link or name of organization here* and has tornado information \
+st.write("Our data comes from  NOAA's National Weather Service (https://www.spc.noaa.gov/wcm/#data) \
+        and has tornado information \
          from 1950-2023.  We also pulled additional information such as CPI from the St. Louis FRED \
          for inflation measurements, and information like state population and area sizes \
          from Wikipedia.  There are limitations in our data, along with certain ways to interpret \
