@@ -30,7 +30,7 @@ with st.sidebar:
         ("Nation", "Region", "Division", "State")
     )
 
-st.write("# Tornado Project")
+year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
 
 # creates drop down options for users to select their desired inputs
 if(selection == "State"):
