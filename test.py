@@ -38,7 +38,18 @@ with st.sidebar:
         ("Nation", "Region", "Division", "State")
     )
 
-year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
+# creates titles and short description on how the webpage works
+st.title("USA Tornado Visualizations")
+st.write("Select filters such as the start year, end year, and any subset of the USA you'd like to see insights for!")
+st.write("Please note that collection of data has changed over time, and some assumptions have been made to make this data readily \
+        available for your viewing.  Please view our 'Extra Information' page to learn more about these assumptions and limitations \
+        of this data.")
+
+year_new = st.slider("Select the year range", min(df['yr']), max(df['yr']), (2013,2023))
+# idea to add in warning about assumptions
+if(year_new[0] < 1996):
+    st.write("Damage estimates are signficantly less accurate before 1996.  Please view our 'Extra Information' page for more information.")
+
 
 # creates drop down options for users to select their desired inputs
 if(selection == "State"):
