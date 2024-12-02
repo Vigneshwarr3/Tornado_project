@@ -79,7 +79,7 @@ class stateVis:
         
         fig, ax = plt.subplots()
         sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'loss_per_area', ax=ax)
-        ax.set_title(f"Total inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}, per 10k square miles")
+        ax.set_title(f"Total inflation adjusted loss for states in the years \n {self.years[0]} - {self.years[1]}, per 10k square miles")
         ax.set_xlabel("state")
         ax.set_ylabel("dollar loss per 10k sq mi, inflation adjusted for 8/24") 
 
@@ -111,7 +111,7 @@ class stateVis:
         
         fig, ax = plt.subplots()
         sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'fat_per_area', ax=ax)
-        ax.set_title(f"Fatalities for states in the years {self.years[0]} - {self.years[1]}, per 10k square miles")
+        ax.set_title(f"Fatalities for states in the years {self.years[0]} - {self.years[1]}, \n per 10k sq miles")
         ax.set_xlabel("state")
         ax.set_ylabel("fatalities per 10k sq mi") 
 

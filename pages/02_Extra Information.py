@@ -1,5 +1,12 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="Tornado Info", 
+    page_icon="🌪️", 
+    layout="wide", 
+    initial_sidebar_state="expanded"
+)
+
 # creates webpage to explain the data and assumptions
 st.title("Extra information for our project and our data")
 
