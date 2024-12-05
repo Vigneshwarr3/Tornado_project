@@ -40,7 +40,7 @@ def create_sidebar():
     """, unsafe_allow_html=True)
 
 # DEFAULT SHOULD BE FALSE
-local_test = False
+local_test = True
 if local_test: 
     ''' RUN DATA LOCALLY '''
     df = pd.read_csv('Tornado_clean.csv')
@@ -61,7 +61,7 @@ else:
         return df
 
     try:
-        df, fatal_loss = get_data()
+        df = get_data()
     except ClientError as e:
         st.error("We're sorry, but our bandwidth cap has been reached for the day.  Please come again tomorrow!\
             If this problem persists, please contact one of us via our GitHub: https://github.com/Vigneshwarr3/Tornado_project")
@@ -74,12 +74,13 @@ create_sidebar()
 with st.sidebar:
     selection = st.radio(
         "Choose a filter to explore",
-        ("Nation", "Region", "Division", "State")
+        #("Nation", "Region", "Division", "State"),
+        ("State", "Division", "Region", "Nation"),
     )
     if selection != "Nation": 
         year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
     else:
-        year = st.selectbox("Select a year", df['yr'].sort_values(ascending=False).unique(), index = 0)
+        year = st.selectbox("Select a year", df['yr'].sort_values(ascending=False).unique(), index = 1)
 
     if selection == "State":
         states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
@@ -126,7 +127,7 @@ if(selection == "State"):
         #st.markdown("![Alt Text](https://lh4.googleusercontent.com/proxy/XR2ptXGHlegbGutJAvnZzI06FrdMdNYAbDpKJZs_rrvaUIHfZSdXcRneexVcnA)")
 
     else:
-        st.write("Select states, atleast 2 and not more than 6 states, to view visualizations!")
+        st.write("Select between 1 and 6 states to view visualizations!")
         
 
 elif(selection == "Division"):
@@ -134,7 +135,7 @@ elif(selection == "Division"):
     st.write("# Division")
     st.write("")
     
-    if(len(division) > 1):
+    if(len(division) > 0):
         # st.write("This area of code is being worked on!  No visualizations available at this time.")
         # need to make a py file with divsion class and visualizations 
         div_input = DivisionVis(df, division, year_new[0], year_new[1])
@@ -143,7 +144,7 @@ elif(selection == "Division"):
         st.pyplot(div_input.fat_division())
 
     else:
-        st.write("Select atleast 2 divisions to see visualizations!")
+        st.write("Select a division to see visualizations!")
 
 elif(selection == "Region"):
 
