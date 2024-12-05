@@ -4,7 +4,6 @@ import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
 from utils.b2 import B2
-import folium
 from streamlit_folium import st_folium
 import visualizations as vis
 from tornado4 import analyze_tornado_dataset,plot_top_tornado_states,plot_tornadoes_by_month_for_year,plot_tornadoes_by_state_and_year,plot_yearly_trend,plot_monthly_trend
@@ -50,14 +49,7 @@ def get_data():
 # ------------------------------
 st.write('''# Project Tornado''')
 
-try:
-    df, fatal_loss = get_data()
-except ClientError as e:
-    st.error("We're sorry, but our bandwidth cap has been reached for the day.  Please come again tomorrow!\
-        If this problem persists, please contact one of us via our GitHub: https://github.com/Vigneshwarr3/Tornado_project")
-    st.stop()
-    # If we want to create an alternative, like be sent to another page of our website, we can do that fs
-    # but we don't have those capabilities rn, so I'm adding the stop function
+df, fatal_loss = get_data()
 
 # ------------------------------
 # PART 1 : Filter Data
@@ -126,12 +118,11 @@ elif trend_option == 'State/Year Analysis':
 year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2020, 2023))
 year = year_new[0]
 year_end = year_new[0]
-#st.write(df.columns)                  
+
 # we can make more like regions, but we might want to reformat this
 states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
 
-
-df_year = df_year = fatal_loss[fatal_loss['yr'] == year]
+df_year = fatal_loss[fatal_loss['yr'] == year]
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -152,6 +143,9 @@ st_folium(vis.folium_map(df_year, year), width=700, height=450)
 
 # displaying the map 
 st_folium(vis.tornado_paths(df, year), width=700, height=450)
+
+# we can make more like regions, but we might want to reformat this
+states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
 
 # a new test plot from visualisations.py
 st.pyplot(vis.infl_adj_loss_state(df, states, [year, year_end]))

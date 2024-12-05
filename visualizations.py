@@ -47,13 +47,12 @@ class stateVis:
         new_df = new_df[new_df['yr'].isin(list(range(int(self.years[0]),int(self.years[1]) ))) ]
         group_df = new_df.groupby('State')['loss_adjusted'].sum().reset_index()
         
-        fig, ax = plt.subplots()
-        sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'loss_adjusted', ax=ax)
-        ax.set_title(f"Total inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}")
-        ax.set_xlabel("state")
-        ax.set_ylabel("dollar loss, inflation adjusted for 8/24")      
+        sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'loss_adjusted')
+        plt.title(f"Inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}")
+        plt.xlabel("state")
+        plt.ylabel("dollar loss, inflation adjusted for 8/24") 
 
-        return fig        
+        return plt        
         
     # df is cleaned tornado, states is array ['x','y','z'], years is [start,end]
     def infl_adj_loss_state_year(self):    
@@ -80,7 +79,7 @@ class stateVis:
         
         fig, ax = plt.subplots()
         sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'loss_per_area', ax=ax)
-        ax.set_title(f"Total inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}, per 10k square miles")
+        ax.set_title(f"Total inflation adjusted loss for states in the years \n {self.years[0]} - {self.years[1]}, per 10k square miles")
         ax.set_xlabel("state")
         ax.set_ylabel("dollar loss per 10k sq mi, inflation adjusted for 8/24") 
 
@@ -112,7 +111,7 @@ class stateVis:
         
         fig, ax = plt.subplots()
         sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'fat_per_area', ax=ax)
-        ax.set_title(f"Fatalities for states in the years {self.years[0]} - {self.years[1]}, per 10k square miles")
+        ax.set_title(f"Fatalities for states in the years {self.years[0]} - {self.years[1]}, \n per 10k sq miles")
         ax.set_xlabel("state")
         ax.set_ylabel("fatalities per 10k sq mi") 
 
@@ -219,83 +218,3 @@ class stateVis:
         ax.set_ylabel("total tornados per month") 
 
         return fig
-
-    # Instead of having the folium maps in the app.py file, I'm (vigneshwar) moving the here into a function, so that its neat.
-
-    def get_tooltip_content(state_name, df_year):
-        row = df_year[df_year['State'] == state_name]
-        if state_name in df_year['State'].values:
-            content = f"""
-            <b>State:</b> {state_name}<br>
-            <b>Tornadoes:</b> {row['om'].values[0]}<br>
-            <b>Fatalities:</b> {row['fat'].values[0]}<br>
-            <b>Crop Loss:</b> ${row['closs'].values[0]:,.0f}<br>
-            <b>Property Loss:</b> ${row['loss'].values[0]:,.0f}<br>
-            <b>Injuries:</b> {row['inj'].values[0]}
-            """
-        else:
-            content = f"<b>State:</b> {state_name}<br>No data available"
-        
-        return content
-
-    ### Folium map ###
-    def folium_map(df_year, year):
-        geojson_url = 'https://raw.githubusercontent.com/python-visualization/folium/master/examples/data/us-states.json'
-
-        m = folium.Map(location=[42, -98], zoom_start=4)
-
-        folium.Choropleth(
-            geo_data=geojson_url,
-            name='choropleth',
-            data=df_year,
-            columns=['State', 'om'], 
-            key_on='feature.properties.name',
-            fill_color='Oranges',
-            line_opacity=0.5,
-            legend_name=f'Number of Tornadoes in the year {year}'
-        ).add_to(m)
-
-        tooltip_layer = folium.GeoJson(
-            geojson_url,
-            style_function=lambda x: {'fillColor': 'transparent', 'color': 'black', 'weight': 1, 'fillOpacity': 0},
-            tooltip=folium.GeoJsonTooltip(
-                fields=['name'],  # Field from GeoJSON to use for tooltips
-                aliases=['State:'],  # Label for the field
-                localize=True,
-                sticky=False,
-                labels=True
-            ),
-            highlight_function=lambda x: {'weight': 2, 'color': 'blue', 'fillOpacity': 0.7}
-        )
-
-        for feature in tooltip_layer.data['features']:
-            state_name = feature['properties']['name']
-            tooltip_content = get_tooltip_content(state_name, df_year)
-            feature['properties']['tooltip'] = tooltip_content  # Add tooltip content for each state
-
-        tooltip_layer.add_child(folium.features.GeoJsonTooltip(fields=['tooltip'], labels=False))
-
-        tooltip_layer.add_to(m)
-
-        return m
-
-    ####### Tornado paths #########
-    def tornado_paths(df, year):
-
-        tornado_location = df[['om', 'yr', 'slat','slon', 'elat', 'elon', 'len', 'wid']]
-        tornado_location = tornado_location[~ tornado_location.duplicated()]
-
-        tornado_paths = tornado_location[tornado_location['yr'] == year]
-
-        tornado_map = folium.Map(location=[42, -98], zoom_start=4)
-
-        for _, row in tornado_paths.iterrows():
-            weight_ = ((row['wid'] - min(tornado_paths['wid'])) / (max(tornado_paths['wid']) - min(tornado_paths['wid'])))*10
-            start = [row['slat'], row['slon']]
-            end = [row['elat'], row['elon']]
-            weight = row['wid']
-            hover_message = f"<b> Tornado Dimensions</b>  <br> Length: {row['len']} miles <br>Width: {row['wid']} yards"
-            
-            folium.PolyLine(locations=[start, end], color="red", weight=weight_, tooltip=hover_message).add_to(tornado_map)
-        
-        return tornado_map
