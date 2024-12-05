@@ -1,8 +1,14 @@
 import streamlit as st
 import os
 import pandas as pd
-from visualizations import stateVis
 
+from dotenv import load_dotenv
+from utils.b2 import B2
+from streamlit_folium import st_folium
+import visualizations as vis
+from botocore.exceptions import ClientError
+
+from visualizations import stateVis
 from Nation_Visualisation import nationVis
 from Region_Visualisations import regionVis
 from Division_Visualisation import DivisionVis
@@ -33,7 +39,34 @@ def create_sidebar():
     </p>
     """, unsafe_allow_html=True)
 
-df = pd.read_csv('Tornado_clean.csv')
+# DEFAULT SHOULD BE FALSE
+local_test = False
+if local_test: 
+    ''' RUN DATA LOCALLY '''
+    df = pd.read_csv('Tornado_clean.csv')
+else: 
+    ''' RUN DATA REMOTE '''
+    REMOTE_DATA = 'Tornado_clean.csv' # name of the file
+    load_dotenv()
+    # load Backblaze connection
+    b2 = B2(endpoint='https://s3.us-east-005.backblazeb2.com',
+            key_id='005ad5797e6974d0000000002',
+            secret_key='K005q7mZ1SwcxHEotsKEd7mnihbmkVg')
+    @st.cache_data
+    def get_data():
+        # collect data frame of reviews and their sentiment
+        b2.set_bucket('tornado-second-version')
+        df= b2.get_df(REMOTE_DATA)
+        
+        return df
+
+    try:
+        df, fatal_loss = get_data()
+    except ClientError as e:
+        st.error("We're sorry, but our bandwidth cap has been reached for the day.  Please come again tomorrow!\
+            If this problem persists, please contact one of us via our GitHub: https://github.com/Vigneshwarr3/Tornado_project")
+        st.stop()
+
 
 create_sidebar()
 
@@ -59,7 +92,7 @@ if(selection == "State"):
     st.write("# State")
     st.write("")
     # executes code if at least one state is selected
-    if(len(states) in range(2,7)):
+    if(len(states) in range(1,7)):
         # the class for this would be found in the visualizations py file
         # from visualizations import stateVis # <- new way to import
         input = stateVis(df, states, year_new[0], year_new[1])
@@ -86,6 +119,7 @@ if(selection == "State"):
         feq_col2.pyplot(input.frequency_years_10kppl())
         feq_col1.pyplot(input.time_of_day())
         feq_col2.pyplot(input.time_of_year())
+        st.pyplot(input.frequency_months())
 
     elif len(states) > 6:
         st.write("Please select less than 7 states to view visualisations!")
