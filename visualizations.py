@@ -174,6 +174,28 @@ class stateVis:
         ax.set_ylabel("number of confirmed tornados")
 
         return fig
+    
+    def frequency_months(self):
+        # Group data by month and count tornado occurrences
+        new_df = self.df[self.df['State'].isin(self.states)]
+        new_df = new_df[new_df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        monthly_trend = new_df.groupby('mo').size().reset_index(name='Tornado Count')
+
+        # Plot
+        fig, ax = plt.subplots(figsize=(10, 5))
+        #sns.barplot(monthly_trend['mo'], monthly_trend['Tornado Count'], ax=ax)#, color='skyblue', edgecolor='black')
+        sns.barplot(data = monthly_trend, x = 'mo', y = 'Tornado Count', ax=ax)
+        #sns.barplot(data = group_df.iloc[0:10], x = 'State', y = 'fat_per_ppl', ax=ax)
+        ax.set_title("Total Tornadoes by Month")
+        ax.set_xlabel("Month")
+        ax.set_ylabel("Number of Tornadoes")
+        ax.set_xticks(range(0, 12))
+        ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+        #ax.grid(axis='y')
+        #plt.tight_layout()
+        #st.pyplot(fig)
+        
+        return fig
         
     def frequency_years_10kppl(self):
         self.df['freq_per_ppl'] = 1 / self.df['pop'] * 10000
@@ -218,3 +240,5 @@ class stateVis:
         ax.set_ylabel("total tornados per month") 
 
         return fig
+    
+    
