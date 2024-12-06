@@ -1,3 +1,5 @@
+Link to streamlit app: tornado.streamlit.app
+
 ----- OVERVIEW -----
 Tornados have changed a lot over the years.  We are better able to track them, assess their damages, and importantly assess how they are changing.  Many
 people are aware of the destruction of Tornado Alley, but not everyone may be so cognizent on how the geographic tornado hotspot has shifted east recently.
@@ -39,7 +41,9 @@ No algorithms were used for this project beyond implmentation of cleaning, mergi
 ----- TOOLS USED -----
   The project's tools can be broken into two categories: running the streamlit app, and creating the data used for analysis.
 -- Running Streamlit: --
-  *talk about the different tools we used to store data
+  Backblaze to store tornado information
+  Botocore for exceptions
+  Dotenv and utils.b2
 -- Creating the tornado data: --
   Pandas for data manipulation, much of which has been explained above.
   MatPlotLib and Seaborn for standard two dimentional plots comparing two variables.
