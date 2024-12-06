@@ -95,7 +95,7 @@ if(selection == "State"):
         
         # all the visualizations
         # put the maps here, idk how to do those
-        st.header("💥 Damage Adjusted for Inflation")
+        st.header("Damage Adjusted for Inflation")
         damage_col1, damage_col2 = st.columns(2)
         damage_col1.pyplot(input.infl_adj_loss_state())
         damage_col2.pyplot(input.infl_adj_loss_state_per10ksqmi())
@@ -104,7 +104,7 @@ if(selection == "State"):
         new_df = df[df['State'].isin(states)]
         new_df = new_df[new_df['yr'].isin(list(range(int(year_new[0]),int(year_new[1]) ))) ]
 
-        st.header("😵 Fatalities")
+        st.header("Fatalities")
         if new_df['fat'].sum() > 0:
             fatal_col1, fatal_col2 = st.columns(2)
             fatal_col1.pyplot(input.fat_state())
@@ -113,9 +113,9 @@ if(selection == "State"):
             st.pyplot(input.fat_state_year())
             st.pyplot(input.fat_state_year_10kppl())
         else:
-            st.write(f"Good news 😊, There are no fatalities in the selected states between the years {year_new[0]} and {year_new[1]}")
+            st.write(f"There were no fatalities in the selected states between the years {year_new[0]} and {year_new[1]}")
 
-        st.header("♩ Frequencies of Tornados")
+        st.header("Frequencies of Tornados")
         st.pyplot(input.frequency_years())
         st.pyplot(input.frequency_years_10kppl())
         st.pyplot(input.time_of_day())
@@ -146,7 +146,7 @@ elif(selection == "Division"):
         st.header("🔻 Loss")
         st.pyplot(div_input.infl_adj_loss_division())
 
-        st.header("😵 Fatalities")
+        st.header("Fatalities")
         st.pyplot(div_input.fat_division())
 
     else:
@@ -164,7 +164,7 @@ elif(selection == "Region"):
         st.header("🔻 Loss")
         st.pyplot(region_input.infl_adj_loss_region())
     with col2:
-        st.header("😵 Fatalities")
+        st.header("Fatalities")
         st.pyplot(region_input.fat_region())
 
 else:
