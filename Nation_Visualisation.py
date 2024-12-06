@@ -11,23 +11,41 @@ class nationVis:
                             .aggregate({"fat":"sum", "om":'nunique', 'closs': 'sum', 'loss': 'sum', 'inj': 'sum', }).reset_index()
         self.df_year = self.fatal_loss[self.fatal_loss['yr'] == year]
 
+    
+    def format_number(self, value):
+        """
+        Converts a number into a human-readable format with appropriate suffixes.
+        """
+        if value >= 1_000_000_000:
+            return f"$ {value / 1_000_000_000:.2f} Billion"
+        elif value >= 1_000_000:
+            return f"$ {value / 1_000_000:.2f} Million"
+        elif value >= 1_000:
+            return f"$ {value / 1_000:.2f} K"
+        elif value == 0:
+            return "Unknown"
+        else:
+            return f"$ {int(value)}"
+    
+
     def show_metrics(self):
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Total Fatalities", sum(self.df_year['fat']))
+            st.metric("☠️ Fatalities", sum(self.df_year['fat']))
         with col2:
-            st.metric("Number of Tornadoes affected", self.df_year['om'].nunique())
+            st.metric("🌪️ Tornadoes affected", self.df_year['om'].nunique())
         with col3:
-            st.metric("Total Injuries", sum(self.df_year['inj']))
+            st.metric("🤕 Injuries", sum(self.df_year['inj']))
 
         col4, col5 = st.columns(2)
         with col4:
-            st.metric("Total Crop loss",'${:,}'.format(sum(self.df_year['closs'])))
+            value = self.format_number(sum(self.df_year['closs']))
+            st.metric("🌾 Crop loss", value)
         with col5:
-            st.metric("Total Property loss",'${:,}'.format(sum(self.df_year['loss'])))
+            value = self.format_number(sum(self.df_year['loss']))
+            st.metric("🏠 Property loss", value)
 
-    # Instead of having the folium maps in the app.py file, I'm (vigneshwar) moving the here into a function, so that its neat.
     
 
     ### Folium map ###
