@@ -10,19 +10,18 @@ st.set_page_config(
 left_col, right_col = st.columns(2)
 
 left_col.markdown("# Tornado Project")
-left_col.markdown("### A tool for visualising Tornado data")
+left_col.markdown("### Visualize Tornado data")
 
-right_col.markdown("![Alt Text](https://media.tenor.com/DObIxX3C-qkAAAAM/tornado-animaniacs.gif)")
+right_col.markdown("![Tornado image](https://media.tenor.com/DObIxX3C-qkAAAAM/tornado-animaniacs.gif)")
 
-st.write('''## How to use?''')
+st.write('''## 🤔 How to use?''')
 
-st.write('''- On the side bar, you can see few pages. Choose the "Trends" page.''')
-st.write('''- After clicking "Trends", you will visualizations for Nation.''')
-st.write('''- You also have the option to explore different filters, Region, Division & State.''')
-st.write('''- Note, you may need to further select any 5 states or division, if you chose State or Division filter.''')
-st.write('''- Select a range of years using the slider to modify the window of data you want to visualize.''')
+st.write('''- On the side bar choose the "Explore" page.''')
+st.write('''- After which you will view visualizations for States.''')
+st.write('''- Explore different filters by choosing them.''')
+st.write('''- Fiddle around with the remaining filters to view the respective visualizations!''')
 
-st.write('''## What is Extra Information?''')
+st.write('''## ℹ️  Extra Information?''')
 
 st.write('''This page contains details about the origin of the data we use, what cleaning we have performed in the data, the methodologies we used to visualize the data.''')
 

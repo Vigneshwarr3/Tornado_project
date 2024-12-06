@@ -1,12 +1,24 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import textwrap
+from matplotlib.ticker import FuncFormatter
 
 class DivisionVis:
     def __init__(self, df, division, start_year, end_year):
         self.df = df
         self.division = division
         self.years = [start_year, end_year]
+
+    # Function to format y-axis values
+    def format_yaxis(self, value, tick_number):
+        if value >= 1_000_000_000:
+            return f"{value/1_000_000_000:.0f}B"
+        elif value >= 1_000_000:
+            return f"{value/1_000_000:.0f}M"
+        elif value >= 1_000:
+            return f"{value/1_000:.0f}K"
+        else:
+            return str(int(value))
 
     ''' INFLATION ADJUSTED LOSSES '''
 
@@ -19,9 +31,10 @@ class DivisionVis:
         
         ax = sns.barplot(data = group_df.iloc[0:10], x = 'Division', y = 'loss_adjusted')
         labels = [textwrap.fill(label.get_text(), 12) for label in ax.get_xticklabels()]
-        plt.title(f"Inflation for regions btw {self.years[0]} - {self.years[1]}")
+        plt.title(f"Inflation adjusted loss for states in the years {self.years[0]} - {self.years[1]}, per year")
         ax.set_xticklabels(labels)
         plt.ylabel("dollar loss, inflation adjusted for 8/24") 
+        plt.gca().yaxis.set_major_formatter(FuncFormatter(self.format_yaxis))
 
         return plt
     
@@ -36,5 +49,6 @@ class DivisionVis:
         ax.set_title(f"Total fatalities for Divisions in the years {self.years[0]} - {self.years[1]}")
         ax.set_xticklabels(labels)
         ax.set_ylabel("fatalities") 
+        fig.gca().yaxis.set_major_formatter(FuncFormatter(self.format_yaxis))
 
         return fig
