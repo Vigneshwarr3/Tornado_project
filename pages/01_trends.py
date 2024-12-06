@@ -42,16 +42,18 @@ def create_sidebar():
 # DEFAULT SHOULD BE FALSE
 local_test = False
 if local_test: 
-    ''' RUN DATA LOCALLY '''
+    #''' RUN DATA LOCALLY '''
     df = pd.read_csv('Tornado_clean.csv')
 else: 
-    ''' RUN DATA REMOTE '''
-    REMOTE_DATA = 'Tornado_clean.csv' # name of the file
+    #''' RUN DATA REMOTE '''
     load_dotenv()
+    REMOTE_DATA = 'Tornado_clean.csv' # name of the file
+    KEY_ID = os.getenv('B2_KEYID')
+    SECRET_KEY = os.getenv('B2_APPKEY')
     # load Backblaze connection
     b2 = B2(endpoint='https://s3.us-east-005.backblazeb2.com',
-            key_id='005ad5797e6974d0000000002',
-            secret_key='K005q7mZ1SwcxHEotsKEd7mnihbmkVg')
+            key_id=KEY_ID,
+            secret_key=SECRET_KEY)
     @st.cache_data
     def get_data():
         # collect data frame of reviews and their sentiment
