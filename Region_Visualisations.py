@@ -15,7 +15,7 @@ class regionVis:
         group_df = new_df.groupby('Region')['loss_adjusted'].sum().reset_index()
         
         sns.barplot(data = group_df.iloc[0:10], x = 'Region', y = 'loss_adjusted')
-        plt.title(f"Inflation for regions btw {self.years[0]} - {self.years[1]}")
+        plt.title(f"Inflation adjusted loss for regions btw {self.years[0]} - {self.years[1]}")
         plt.xlabel("Region")
         plt.ylabel("dollar loss, inflation adjusted for 8/24") 
 
