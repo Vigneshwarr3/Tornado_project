@@ -1,4 +1,4 @@
-Link to streamlit app: tornado.streamlit.app
+Link to streamlit app: https://tornadotrend.streamlit.app
 
 ----- OVERVIEW -----
 Tornados have changed a lot over the years.  We are better able to track them, assess their damages, and importantly assess how they are changing.  Many
