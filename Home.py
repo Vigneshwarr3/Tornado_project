@@ -43,7 +43,7 @@ footer="""
                 left: 1;
                 bottom: 0;
                 width: 100%;
-                background-color: transparent;
+                background-color: black;
                 color: white;
                 text-align: left;
                 }
