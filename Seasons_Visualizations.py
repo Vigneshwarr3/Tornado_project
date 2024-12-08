@@ -1,18 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def analyze_and_plot_tornado_seasonal_counts(dataframe):
-    """
-    Analyzes tornado data to compute seasonal tornado counts and visualize the results,
-    without modifying the original DataFrame.
-    
-    Parameters:
-    - dataframe (pd.DataFrame): A pandas DataFrame containing tornado data with a 'date' column and a 'Tornado Count' column.
-    """
-    # Convert 'date' column to datetime
-    dataframe['date'] = pd.to_datetime(dataframe['date'])
+# Convert 'date' column to datetime
+df['date'] = pd.to_datetime(df['date'])
 
-    # Define a function to assign seasons based on the month
+# Define a function to analyze and plot tornado counts by season
+def plot_seasons(data):
+    # Define seasons
     def get_season(month):
         if month in [12, 1, 2]:
             return 'Winter'
@@ -23,11 +17,12 @@ def analyze_and_plot_tornado_seasonal_counts(dataframe):
         elif month in [9, 10, 11]:
             return 'Fall'
 
-    # Compute seasonal tornado counts dynamically
+    # Create a temporary column for season
+    temp_season = data['date'].dt.month.apply(get_season)
+
+    # Aggregate tornado counts by season
     seasonal_counts = (
-        dataframe
-        .assign(season=dataframe['date'].dt.month.map(get_season))  # Temporary 'season' column
-        .groupby('season')['Tornado Count']
+        data.groupby(temp_season)['Tornado Count']
         .sum()
         .reindex(['Winter', 'Spring', 'Summer', 'Fall'])
     )
@@ -50,5 +45,5 @@ def analyze_and_plot_tornado_seasonal_counts(dataframe):
     plt.tight_layout()
     plt.show()
 
-
-analyze_and_plot_tornado_seasonal_counts(df)  
+# Call the function
+plot_seasons(df)
