@@ -35,6 +35,7 @@ def create_sidebar():
 
 # DEFAULT SHOULD BE FALSE
 local_test = False
+
 if local_test: 
     #''' RUN DATA LOCALLY '''
     df = pd.read_csv('Tornado_clean.csv')
