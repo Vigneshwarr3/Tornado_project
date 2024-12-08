@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as stats
 
-file_path = 'd:/Gitprojects/Project/1950-2023_all_tornadoes.csv'  # Update the path if needed
+file_path = 'd:/Gitprojects/Project/1950-2023_all_tornadoes.csv'  
 tornado_data = pd.read_csv(file_path)
 
 tornado_data['date'] = pd.to_datetime(tornado_data['date'])

@@ -12,6 +12,7 @@ from visualizations import stateVis
 from Nation_Visualisation import nationVis
 from Region_Visualisations import regionVis
 from Division_Visualisation import DivisionVis
+from Dimensions_Visualisations import DimensionsVis
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -33,7 +34,7 @@ def create_sidebar():
     """, unsafe_allow_html=True)
 
 # DEFAULT SHOULD BE FALSE
-local_test = False
+local_test = True
 if local_test: 
     #''' RUN DATA LOCALLY '''
     df = pd.read_csv('Tornado_clean.csv')
@@ -70,7 +71,7 @@ with st.sidebar:
     selection = st.radio(
         "Choose a filter to explore",
         #("Nation", "Region", "Division", "State"),
-        ("State", "Division", "Region", "Nation"),
+        ("State", "Division", "Region", "Nation", "Dimensions"),
     )
     if selection != "Nation": 
         year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
@@ -81,6 +82,9 @@ with st.sidebar:
         states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
     elif selection == "Division":
         division = st.multiselect("Select Divisions: ", df.sort_values(by=['Division'], ascending=True)['Division'].unique())
+        
+    elif selection == "Dimensions":
+        states = st.multiselect("Select States: ", df.sort_values(by=['State'], ascending=True)['State'].unique())
 
 # creates drop down options for users to select their desired inputs
 if(selection == "State"):
@@ -167,7 +171,8 @@ elif(selection == "Region"):
         st.header("😵 Fatalities")
         st.pyplot(region_input.fat_region())
 
-else:
+
+elif(selection == "Nation"):
     st.write("# Nation")
     st.write("")
     nation_input = nationVis(df, year)
@@ -188,3 +193,19 @@ else:
     st.write('''We have tried to trace the tornado's path based on the start and end coordinates. Thickness of the line traced is relative to the size of the actual tornado itself, so that you can have a sense of how big of a tornado affected in a particular area.''')
     st.write('''Hover over each path to view the metrics!''')
     st_folium(nation_input.tornado_paths(), width=750, height=450)
+
+elif(selection == "Dimensions"):
+    st.write("# Dimensions Diagnosis")
+    
+    Dim_input = DimensionsVis(df, states, year_new[0], year_new[1])
+    
+    if len(states) == 1:
+        st.pyplot(Dim_input.tornado_width_over_time())
+        st.pyplot(Dim_input.tornado_length_over_time())
+    else:
+        st.write("Please, Select one state only for other visualisations!!!")
+    
+    st.pyplot(Dim_input.magnitude_vs_fatalities())
+    st.pyplot(Dim_input.visualize_high_intensity_tornadoes())
+
+
