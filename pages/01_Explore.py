@@ -10,6 +10,7 @@ from botocore.exceptions import ClientError
 
 from visualizations import stateVis
 from Nation_Visualisation import nationVis
+from Seasons_Visualizations import plot_seasons
 from Region_Visualisations import regionVis
 from Division_Visualisation import DivisionVis
 from Dimensions_Visualisations import DimensionsVis
@@ -156,6 +157,10 @@ elif(selection == "Division"):
 
     else:
         st.write("Select a division to see visualizations!")
+elif(selection == "Seasons"):
+
+    st.write("# Seasons")
+    st.write(" ")
 
 elif(selection == "Region"):
 
