@@ -52,3 +52,5 @@ class DivisionVis:
         fig.gca().yaxis.set_major_formatter(FuncFormatter(self.format_yaxis))
 
         return fig
+    
+    
