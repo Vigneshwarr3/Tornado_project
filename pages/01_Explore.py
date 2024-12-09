@@ -73,7 +73,7 @@ with st.sidebar:
     selection = st.radio(
         "Choose a filter to explore",
         #("Nation", "Region", "Division", "State"),
-        ("State", "Division", "Region", "Nation", "Dimensions"),
+        ("State", "Division", "Seasons","Region", "Nation", "Dimensions"),
     )
     if selection != "Nation": 
         year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
