@@ -1,11 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Convert 'date' column to datetime
-df['date'] = pd.to_datetime(df['date'])
-
 # Define a function to analyze and plot tornado counts by season
 def plot_seasons(data):
+
+    # Convert 'date' column to datetime
+    data['date'] = pd.to_datetime(data['date'])
+
     # Define seasons
     def get_season(month):
         if month in [12, 1, 2]:
@@ -22,8 +23,8 @@ def plot_seasons(data):
 
     # Aggregate tornado counts by season
     seasonal_counts = (
-        data.groupby(temp_season)['Tornado Count']
-        .sum()
+        data.groupby(temp_season)['om']
+        .nunique()
         .reindex(['Winter', 'Spring', 'Summer', 'Fall'])
     )
 
@@ -41,9 +42,4 @@ def plot_seasons(data):
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
 
-    # Show plot
-    plt.tight_layout()
-    plt.show()
-
-# Call the function
-plot_seasons(df)
+    return plt
