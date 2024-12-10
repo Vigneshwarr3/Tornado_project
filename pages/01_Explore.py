@@ -161,6 +161,7 @@ elif(selection == "Division"):
 elif(selection == "Seasons"):
 
     st.write("# Seasons")
+    st.pyplot(plot_seasons(df))
 
 elif(selection == "Region"):
 
