@@ -162,7 +162,7 @@ elif(selection == "Division"):
         st.write("Select a division to see visualizations!")
 elif(selection == "Seasons"):
 
-    st.header("# Seasons")
+    st.header("Seasons")
     st.write("### This visualization helps you to compare tornado activity across different seasons, revealing seasonal trends.")
     st.write("")
     st.pyplot(plot_seasons(df))
