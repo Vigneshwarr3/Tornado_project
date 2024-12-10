@@ -32,3 +32,40 @@ class regionVis:
         ax.set_ylabel("fatalities") 
 
         return fig
+
+    def fat_region_year(self):    
+        new_df = self.df[self.df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        group_df = new_df.groupby(['Region', 'yr'])['fat'].sum().reset_index()
+
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=group_df, x='yr', y='fat', hue='Region', ax=ax)
+        ax.set_title(f"Fatalities for regions in the years {self.years[0]} - {self.years[1]}, per year")
+        ax.set_xlabel("year")
+        ax.set_ylabel("fatality")
+
+        return fig
+    
+    def damage_region_year(self):    
+        self.df['loss_adjusted'] = self.df['damage'] * self.df['CPI_Multiplier']
+        new_df = self.df[self.df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        group_df = new_df.groupby(['Region', 'yr'])['loss_adjusted'].sum().reset_index()
+
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=group_df, x='yr', y='loss_adjusted', hue='Region', ax=ax)
+        ax.set_title(f"Inflation adjusted damage for regions in the years {self.years[0]} - {self.years[1]}, per year")
+        ax.set_xlabel("year")
+        ax.set_ylabel("inflation adjusted damage (USD)")
+
+        return fig
+    
+    def frequency_years(self):
+        new_df = self.df[self.df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        group_df = new_df.groupby(['Region', 'yr'])['mo'].count().reset_index()
+    
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=group_df, x='yr', y='mo', hue='Region', ax=ax)
+        ax.set_title(f"Frequency of tornados for regions in the years {self.years[0]} - {self.years[1]}, per year")
+        ax.set_xlabel("year")
+        ax.set_ylabel("number of confirmed tornados")
+
+        return fig

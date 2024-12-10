@@ -74,7 +74,7 @@ def clean_col(df):
     # updates latitude and longitude for plotting
     df = latlon(df)
     # updates missing values as NA so agg functions work
-    df['mag'].replace(-9, np.nan)
+    df['mag'] = df['mag'].replace(-9, np.nan)
     #df['closs'].replace(0, np.nan, inplace=True)
     
     return df
