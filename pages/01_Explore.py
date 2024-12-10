@@ -74,10 +74,12 @@ with st.sidebar:
     selection = st.radio(
         "Choose a filter to explore",
         #("Nation", "Region", "Division", "State"),
-        ("State", "Division", "Seasons","Region", "Nation", "Dimensions"),
+        ("State", "Division", "Region", "Nation", "Dimensions", "Seasons"),
     )
-    if selection != "Nation": 
+    if selection != "Nation" and selection != "Seasons": 
         year_new = st.slider("Select the year range", max(df['yr']), min(df['yr']), (2013,2023))
+    elif selection == "Seasons":
+        pass
     else:
         year = st.selectbox("Select a year", df['yr'].sort_values(ascending=False).unique(), index = 1)
 
@@ -162,6 +164,7 @@ elif(selection == "Seasons"):
 
     st.header("# Seasons")
     st.write("### This visualization helps you to compare tornado activity across different seasons, revealing seasonal trends.")
+    st.write("")
     st.pyplot(plot_seasons(df))
 
 elif(selection == "Region"):
