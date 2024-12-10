@@ -182,6 +182,10 @@ elif(selection == "Region"):
         st.header("Fatalities")
         st.pyplot(region_input.fat_region())
 
+    st.pyplot(region_input.fat_region_year())
+    st.pyplot(region_input.damage_region_year())
+    st.pyplot(region_input.frequency_years())
+
 
 elif(selection == "Nation"):
     st.write("# Nation")
