@@ -161,7 +161,6 @@ elif(selection == "Division"):
 elif(selection == "Seasons"):
 
     st.write("# Seasons")
-    st.write(" ")
 
 elif(selection == "Region"):
 

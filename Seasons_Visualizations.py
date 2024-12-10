@@ -43,7 +43,6 @@ def plot_seasons(data):
 
     # Show plot
     plt.tight_layout()
-    plt.show()
 
 # Call the function
 plot_seasons(df)
