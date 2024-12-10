@@ -68,6 +68,7 @@ else:
 
 create_sidebar()
 
+
 # side bar
 with st.sidebar:
     selection = st.radio(
@@ -161,8 +162,9 @@ elif(selection == "Division"):
         st.write("Select a division to see visualizations!")
 elif(selection == "Seasons"):
 
-    st.write("# Seasons")
-    st.write(" ")
+    st.header("# Seasons")
+    st.write("### This visualization helps you to compare tornado activity across different seasons, revealing seasonal trends.")
+    st.write("")
     st.pyplot(plot_seasons(df))
 
 elif(selection == "Region"):

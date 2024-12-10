@@ -42,6 +42,4 @@ def plot_seasons(data):
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
 
-    # Show plot
-    plt.tight_layout()
     return plt
