@@ -97,6 +97,6 @@ def plot_loss_by_season(data):
     plt.yticks(fontsize=10)
 
     # Show plot
-    return plot
+    return plt
 
 
