@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.ticker import StrMethodFormatter
+from matplotlib.ticker import FuncFormatter
 
 # Define a function to analyze and plot tornado counts by season
 def plot_seasons(data):
@@ -46,8 +46,6 @@ def plot_seasons(data):
     return plt
 
 
-
-
 # Define a function to analyze and plot tornado losses by season
 def plot_loss_by_season(data):
     # Define seasons
@@ -71,30 +69,39 @@ def plot_loss_by_season(data):
         .reindex(['Winter', 'Spring', 'Summer', 'Fall'])
     )
 
+    # Convert losses to millions
+    seasonal_losses_in_millions = seasonal_losses / 1_000_000
+
     # Plot losses by season
     plt.figure(figsize=(8, 5))
-    plt.bar(seasonal_losses.index, seasonal_losses.values,
+    plt.bar(seasonal_losses_in_millions.index, seasonal_losses_in_millions.values,
             color=['skyblue', 'orange', 'green', 'purple'], alpha=0.8)
 
     # Highlight the season with the highest loss
-    max_loss_season = seasonal_losses.idxmax()
-    plt.bar(max_loss_season, seasonal_losses[max_loss_season],
+    max_loss_season = seasonal_losses_in_millions.idxmax()
+    plt.bar(max_loss_season, seasonal_losses_in_millions[max_loss_season],
             color='red', alpha=0.8, label=f'Highest Loss ({max_loss_season})')
 
     # Add titles and labels
     plt.title('Tornado Losses by Season', fontsize=16)
     plt.xlabel('Season', fontsize=12)
-    plt.ylabel('Total Loss', fontsize=12)
+    plt.ylabel('Total Loss (in Million)', fontsize=12)
 
     # Add legend
     plt.legend(fontsize=10)
 
-    # Format y-axis to show values like 1,000, 2,000
-    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+    # Format y-axis to use "M" for millions
+    def millions_formatter(x, _):
+        return f'{int(x)}M' if x >= 1 else ''
+
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(millions_formatter))
 
     # Aesthetic adjustments
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
+
+    # Show plot
+    plt.tight_layout()
 
     # Show plot
     return plt
