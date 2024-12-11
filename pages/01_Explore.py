@@ -11,6 +11,7 @@ from botocore.exceptions import ClientError
 from visualizations import stateVis
 from Nation_Visualisation import nationVis
 from Seasons_Visualizations import plot_seasons
+from Seasons_Visualizations import plot_loss_by_season
 from Region_Visualisations import regionVis
 from Division_Visualisation import DivisionVis
 from Dimensions_Visualisations import DimensionsVis
@@ -163,9 +164,12 @@ elif(selection == "Division"):
 elif(selection == "Seasons"):
 
     st.header("Seasons")
-    st.write("### This visualization helps you to compare tornado activity across different seasons, revealing seasonal trends.")
+    st.write("Spring has the highest tornado count, followed by Summer, while Winter has the fewest tornadoes.Spring's peak tornado count is due to its ideal atmospheric conditions for tornado formation, such as significant temperature contrasts and wind shear, which are less prominent in Winter.")
     st.write("")
     st.pyplot(plot_seasons(df))
+    st.header("Losses by Seasons")
+    st.write("  Spring accounts for the highest tornado-related losses, followed by Fall, while Winter has the lowest losses.Spring's high tornado losses could be due to the increased frequency of severe storms during this season, combined with higher damage in populated or economically significant areas. The meeting of warm, moist Gulf air and cold air masses creates powerful storms.")
+    st.pyplot(plot_loss_by_season(df))
 
 elif(selection == "Region"):
 
