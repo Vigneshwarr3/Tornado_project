@@ -186,6 +186,10 @@ elif(selection == "Region"):
         st.header("Fatalities")
         st.pyplot(region_input.fat_region())
 
+    st.pyplot(region_input.fat_region_year())
+    st.pyplot(region_input.damage_region_year())
+    st.pyplot(region_input.frequency_years())
+
 
 elif(selection == "Nation"):
     st.write("# Nation")
@@ -217,10 +221,12 @@ elif(selection == "Dimensions"):
     if len(states) == 1:
         st.pyplot(Dim_input.tornado_width_over_time())
         st.pyplot(Dim_input.tornado_length_over_time())
+
+        st.pyplot(Dim_input.magnitude_vs_fatalities())
+        st.pyplot(Dim_input.visualize_high_intensity_tornadoes())
     else:
-        st.write("Please, Select one state only for other visualisations!!!")
+        st.write("Please select one state for visualisations!")
     
-    st.pyplot(Dim_input.magnitude_vs_fatalities())
-    st.pyplot(Dim_input.visualize_high_intensity_tornadoes())
+    
 
 
