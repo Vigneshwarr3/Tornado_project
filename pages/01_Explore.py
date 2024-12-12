@@ -228,8 +228,6 @@ elif(selection == "Dimensions"):
         st.pyplot(Dim_input.tornado_width_over_time())
         st.pyplot(Dim_input.tornado_length_over_time())
 
-        st.pyplot(Dim_input.magnitude_vs_fatalities())
-        st.pyplot(Dim_input.visualize_high_intensity_tornadoes())
     else:
         st.write("Please select one state for visualisations!")
     
