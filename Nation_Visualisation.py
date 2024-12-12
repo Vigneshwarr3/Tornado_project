@@ -12,20 +12,32 @@ class nationVis:
         self.df_year = self.fatal_loss[self.fatal_loss['yr'] == year]
 
     
-    def format_number(self, value):
+    def format_number(self, value, is_dollar = True):
         """
         Converts a number into a human-readable format with appropriate suffixes.
         """
-        if value >= 1_000_000_000:
-            return f"$ {value / 1_000_000_000:.2f} Billion"
-        elif value >= 1_000_000:
-            return f"$ {value / 1_000_000:.2f} Million"
-        elif value >= 1_000:
-            return f"$ {value / 1_000:.2f} K"
-        elif value == 0:
-            return "Unknown"
+        if is_dollar:
+            if value >= 1_000_000_000:
+                return f"${value / 1_000_000_000:.0f} Billion"
+            elif value >= 1_000_000:
+                return f"${value / 1_000_000:.0f} Million"
+            elif value >= 1_000:
+                return f"${value / 1_000:.0f} K"
+            elif value == 0:
+                return "Unknown"
+            else:
+                return f"${int(value)}"
         else:
-            return f"$ {int(value)}"
+            if value >= 1_000_000_000:
+                return f"{value / 1_000_000_000:.0f} Billion"
+            elif value >= 1_000_000:
+                return f"{value / 1_000_000:.0f} Million"
+            elif value >= 1_000:
+                return f"{value / 1_000:.0f} K"
+            elif value == 0:
+                return "Unknown"
+            else:
+                return f"{int(value)}"
     
 
     def show_metrics(self):
@@ -34,7 +46,7 @@ class nationVis:
         with col1:
             st.metric("Fatalities", sum(self.df_year['fat']))
         with col2:
-            st.metric("🌪️ Tornadoes affected", self.df_year['om'].nunique())
+            st.metric("🌪️ Tornadoes affected", self.df_year['om'].sum())
         with col3:
             st.metric("Injuries", sum(self.df_year['inj']))
 
@@ -45,6 +57,7 @@ class nationVis:
         with col5:
             value = self.format_number(sum(self.df_year['loss']))
             st.metric("🏠 Property loss", value)
+        
 
     
 
@@ -82,16 +95,17 @@ class nationVis:
             if state_name in df_year['State'].values:
                 content = f"""
                 <b>State:</b> {state_name}<br>
-                <b>Tornadoes:</b> {row['om'].values[0]}<br>
-                <b>Fatalities:</b> {row['fat'].values[0]}<br>
-                <b>Crop Loss:</b> ${row['closs'].values[0]:,.0f}<br>
-                <b>Property Loss:</b> ${row['loss'].values[0]:,.0f}<br>
-                <b>Injuries:</b> {row['inj'].values[0]}
+                <b>Tornadoes:</b> {self.format_number(row['om'].values[0], False)}<br>
+                <b>Fatalities:</b> {self.format_number(row['fat'].values[0], False)}<br>
+                <b>Crop Loss:</b> {self.format_number(row['closs'].values[0])}<br>
+                <b>Property Loss:</b> {self.format_number(row['loss'].values[0])}<br>
+                <b>Injuries:</b> {self.format_number(row['inj'].values[0], False)}
                 """
             else:
                 content = f"<b>State:</b> {state_name}<br>No data available"
             
             return content
+        
         for feature in tooltip_layer.data['features']:
             state_name = feature['properties']['name']
             tooltip_content = get_tooltip_content(state_name, self.df_year)

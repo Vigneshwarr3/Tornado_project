@@ -30,7 +30,7 @@ def plot_seasons(data):
     )
 
     # Plot tornado counts by season
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 4))
     plt.bar(seasonal_counts.index, seasonal_counts.values, 
             color=['skyblue', 'orange', 'green', 'purple'], alpha=0.8)
 
@@ -73,7 +73,7 @@ def plot_loss_by_season(data):
     seasonal_losses_in_millions = seasonal_losses / 1_000_000
 
     # Plot losses by season
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 5))
     plt.bar(seasonal_losses_in_millions.index, seasonal_losses_in_millions.values,
             color=['skyblue', 'orange', 'green', 'purple'], alpha=0.8)
 

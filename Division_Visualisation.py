@@ -22,7 +22,7 @@ class DivisionVis:
 
     ''' INFLATION ADJUSTED LOSSES '''
 
-    # df is cleaned tornado, region is array ['x','y','z'], years is [start,end]
+    # df is cleaned tornado, division is array ['x','y','z'], years is [start,end]
     def infl_adj_loss_division(self):
         self.df['loss_adjusted'] = self.df['damage'] * self.df['CPI_Multiplier']
         new_df = self.df[self.df['Division'].isin(self.division)]
@@ -53,4 +53,43 @@ class DivisionVis:
 
         return fig
     
+    def fat_division_year(self):   
+        new_df = self.df[self.df['Division'].isin(self.division)] 
+        new_df = new_df[self.df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        group_df = new_df.groupby(['Division', 'yr'])['fat'].sum().reset_index()
+
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=group_df, x='yr', y='fat', hue='Division', ax=ax)
+        ax.set_title(f"Fatalities for divisions in the years {self.years[0]} - {self.years[1]}, per year")
+        ax.set_xlabel("year")
+        ax.set_ylabel("fatality")
+
+        return fig
     
+    def damage_division_year(self):    
+        self.df['loss_adjusted'] = self.df['damage'] * self.df['CPI_Multiplier']
+        new_df = self.df[self.df['Division'].isin(self.division)]
+        new_df = new_df[self.df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        group_df = new_df.groupby(['Division', 'yr'])['loss_adjusted'].sum().reset_index()
+
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=group_df, x='yr', y='loss_adjusted', hue='Division', ax=ax)
+        ax.set_title(f"Inflation adjusted damage for divisions in the years {self.years[0]} - {self.years[1]}, per year")
+        ax.set_xlabel("year")
+        ax.set_ylabel("inflation adjusted damage (USD)")
+        fig.gca().yaxis.set_major_formatter(FuncFormatter(self.format_yaxis))
+
+        return fig
+    
+    def frequency_years(self):
+        new_df = self.df[self.df['Division'].isin(self.division)]
+        new_df = new_df[self.df['yr'].isin(list(range(int(self.years[0]), int(self.years[1])) )) ]
+        group_df = new_df.groupby(['Division', 'yr'])['mo'].count().reset_index()
+    
+        fig, ax = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=group_df, x='yr', y='mo', hue='Division', ax=ax)
+        ax.set_title(f"Frequency of tornados for divisions in the years {self.years[0]} - {self.years[1]}, per year")
+        ax.set_xlabel("year")
+        ax.set_ylabel("number of confirmed tornados")
+
+        return fig

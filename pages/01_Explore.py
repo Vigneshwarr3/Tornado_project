@@ -153,11 +153,17 @@ elif(selection == "Division"):
         # need to make a py file with divsion class and visualizations 
         div_input = DivisionVis(df, division, year_new[0], year_new[1])
 
-        st.header("🔻 Loss")
-        st.pyplot(div_input.infl_adj_loss_division())
+        col1, col2 = st.columns(2)
+        with col1:
+            st.header("🔻 Loss")
+            st.pyplot(div_input.infl_adj_loss_division())
+        with col2:
+            st.header("Fatalities")
+            st.pyplot(div_input.fat_division())
 
-        st.header("Fatalities")
-        st.pyplot(div_input.fat_division())
+        st.pyplot(div_input.fat_division_year())
+        st.pyplot(div_input.damage_division_year())
+        st.pyplot(div_input.frequency_years())
 
     else:
         st.write("Select a division to see visualizations!")

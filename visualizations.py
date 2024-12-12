@@ -54,7 +54,7 @@ class stateVis:
         
     
     def top_10_tornadoes(self):
-        new_df = self.df[self.df['yr'].isin(list(range(int(2013),int(2023)) )) ]
+        new_df = self.df[self.df['yr'].isin(list(range(int(self.years[0]),int(self.years[1])) )) ]
         top_10 = new_df.groupby('State')['om'].nunique().reset_index().sort_values(by='om', ascending=False)
 
         fig, ax = plt.subplots(figsize=(10, 5))
