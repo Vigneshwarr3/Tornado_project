@@ -1,10 +1,22 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.ticker import FuncFormatter
 
 class regionVis:
     def __init__(self, df, start_year, end_year):
         self.df = df
         self.years = [start_year, end_year]
+
+    # Function to format y-axis values
+    def format_yaxis(self, value, tick_number):
+        if value >= 1_000_000_000:
+            return f"{value/1_000_000_000:.0f}B"
+        elif value >= 1_000_000:
+            return f"{value/1_000_000:.0f}M"
+        elif value >= 1_000:
+            return f"{value/1_000:.0f}K"
+        else:
+            return str(int(value))
 
     ''' INFLATION ADJUSTED LOSSES '''
 
@@ -18,6 +30,7 @@ class regionVis:
         plt.title(f"Inflation adjusted loss for regions btw {self.years[0]} - {self.years[1]}")
         plt.xlabel("Region")
         plt.ylabel("dollar loss, inflation adjusted for 8/24") 
+        plt.gca().yaxis.set_major_formatter(FuncFormatter(self.format_yaxis))
 
         return plt
     
@@ -55,6 +68,7 @@ class regionVis:
         ax.set_title(f"Inflation adjusted damage for regions in the years {self.years[0]} - {self.years[1]}, per year")
         ax.set_xlabel("year")
         ax.set_ylabel("inflation adjusted damage (USD)")
+        fig.gca().yaxis.set_major_formatter(FuncFormatter(self.format_yaxis))
 
         return fig
     
