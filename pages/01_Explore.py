@@ -233,6 +233,7 @@ elif(selection == "Dimensions"):
     else:
         st.write("Please select one state for visualisations!")
     
-    
+    st.pyplot(Dim_input.magnitude_vs_fatalities())
+    st.pyplot(Dim_input.visualize_high_intensity_tornadoes())
 
 
